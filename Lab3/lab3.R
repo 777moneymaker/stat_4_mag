@@ -33,8 +33,8 @@ df = iris %>%
     group_by(Species) %>%
     summarise(across(starts_with("Petal"), 
                      mean, 
-                     .names = "mean_{.col}"), 
-              surf = mean_Petal.Length * mean_Petal.Width) %>%
+                     .names = "{.col}.Mean"),
+              surf = Petal.Length.Mean * Petal.Width.Mean) %>%
     filter(Species == "virginica" | surf != 13)
 
 
@@ -87,3 +87,7 @@ df %>% group_by(country) %>%
     mutate(mean_price = mean(price, na.rm = T), n_in_country = n()) %>% 
     select(title, price, mean_price:n_in_country)
 
+
+df %>% group_by(country) %>% 
+    mutate(mean_price = mean(price, na.rm = T), msqr = mean_price ^ 2, mquadr = msqr * mean_price) %>% 
+    select(title, price, mean_price:mquadr)
