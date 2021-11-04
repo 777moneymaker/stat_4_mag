@@ -152,16 +152,28 @@ t.test(studenci, studentki, paired = F, var.equal = T) # p.val > 0.05 (0.9021)
 A = c(6.7, 7.3, 8.0, 8.0, 7.9, 9.2, 10.1, 9.2, 8.3, 8.4, 8.0, 7.9)
 B = c(7.5, 7.7, 7.7, 8.2, 8.9, 8.9, 10.6, 10.2, 9.4, 9.4, 8.2, 7.8)
 C = c(5.9, 6.9, 7.0, 7.0, 9.5, 9.6, 9.6, 10.3, 8.1, 8.5, 8.6, 8.8)
-df = data.frame(A, B, C)
+grain = data.frame(A, B, C)
 # Dane niezależne
 # Test wariancji
-p.vals = lapply(df, function(x){shapiro.test(x)$p.value})
+p.vals = lapply(grain, function(x){shapiro.test(x)$p.value})
 all(p.vals > 0.05) # => TRUE. Wszystkie p.val > 0.05. 
 # Zgodność z rozkładem normalnym w każdej próbie.
 # Test wariancji
-bartlett.test(df) # => p.value > 0.05. Wariancje są homogeniczne/równe.
-aov()
-library(reshape2)
+bartlett.test(grain) # => p.value > 0.05. Wariancje są homogeniczne/równe.
+# Przeprowadzamy ANOVE
+# H0: u_A = u_B = u_C
+# H1: ~H0
+library(tidyr)
+grain = grain %>%
+    pivot_longer(cols = c(A, B, C), names_to="species", values_to = "heights")
+grain.aov = aov(heights ~ species, data = grain)
+summary(grain.aov)
+# p.value > 0.05 (0.559) co uniemożliwia odrzucenie hipotezy zerowej.
+# Z tego wynika, że nie istnieją istotne różnice między średnimi w grupach A, B, C.
+# (Długości badanych gatunków kłosów nie są różne)
+
+# 8
+
  
 
 
